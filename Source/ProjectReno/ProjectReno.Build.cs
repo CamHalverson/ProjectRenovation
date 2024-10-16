@@ -2,13 +2,13 @@
 
 using UnrealBuildTool;
 
-public class ProjectRenovation : ModuleRules
+public class ProjectReno : ModuleRules
 {
-	public ProjectRenovation(ReadOnlyTargetRules Target) : base(Target)
+	public ProjectReno(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
