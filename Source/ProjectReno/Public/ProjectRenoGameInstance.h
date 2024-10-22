@@ -34,14 +34,11 @@ protected:
 	virtual void OnJoinSessionCopmplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
 	UFUNCTION(BlueprintCallable)
-	void CreateServer();
+	void CreateServer(const FString& SessionName);
 
 	UFUNCTION(BlueprintCallable)
-	void JoinServer();
+	void JoinServer(const FString& SessionName);
 
-
-
-
-
+	FString DesiredSessionName;
 	
 };

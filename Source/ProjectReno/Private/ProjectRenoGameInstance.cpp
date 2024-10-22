@@ -38,14 +38,28 @@ void UProjectRenoGameInstance::OnCreateSessionComplete(FName SessionName, bool S
 
 void UProjectRenoGameInstance::OnFindSessionComplete(bool Succeeded)
 {
-	if (Succeeded)
+	if (Succeeded && SessionSearch.IsValid() && SessionSearch->SearchResults.Num() > 0)
 	{
-		TArray<FOnlineSessionSearchResult> SearchResults = SessionSearch->SearchResults;
-
-		if (SearchResults.Num())
+		for (const auto& Result : SessionSearch->SearchResults)
 		{
-			SessionInterface->JoinSession(0, FName("Project Reno"), SearchResults[0]);
+			FString FoundSessionName;
+
+			if (Result.Session.SessionSettings.Settings.Contains(FName("SESSION_NAME")))
+			{
+				Result.Session.SessionSettings.Settings[FName("SESSION_NAME")].Data.GetValue(FoundSessionName);
+				UE_LOG(LogTemp, Warning, TEXT("Found Session: %s"), *FoundSessionName);
+
+				if (FoundSessionName == DesiredSessionName)
+				{
+					SessionInterface->JoinSession(0, FName(*DesiredSessionName), Result);
+					return;
+				}
+			}
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to find sessions or no sessions found."));
 	}
 }
 
@@ -62,9 +76,10 @@ void UProjectRenoGameInstance::OnJoinSessionCopmplete(FName SessionName, EOnJoin
 	}
 }
 
-void UProjectRenoGameInstance::CreateServer()
+void UProjectRenoGameInstance::CreateServer(const FString& SessionName)
 {
-	UE_LOG(LogTemp, Warning, TEXT("CreateServer"));
+	UE_LOG(LogTemp, Warning, TEXT("CreateServer: %s"), *SessionName);
+
 	FOnlineSessionSettings SessionSettings;
 	SessionSettings.bAllowJoinInProgress = true;
 	SessionSettings.bIsDedicated = false;
@@ -73,11 +88,15 @@ void UProjectRenoGameInstance::CreateServer()
 	SessionSettings.bUsesPresence = true;
 	SessionSettings.NumPublicConnections = 5;
 
-	SessionInterface->CreateSession(0, FName("ProjectReno Session"), SessionSettings);
+	SessionSettings.Set(FName("SESSION_NAME"), SessionName, EOnlineDataAdvertisementType::ViaOnlineService);
+
+	SessionInterface->CreateSession(0, FName(*SessionName), SessionSettings);
 }
 
-void UProjectRenoGameInstance::JoinServer()
+void UProjectRenoGameInstance::JoinServer(const FString& SessionName)
 {
+	DesiredSessionName = SessionName;
+
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	SessionSearch->bIsLanQuery = (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL");
 	SessionSearch->MaxSearchResults = 10000;
