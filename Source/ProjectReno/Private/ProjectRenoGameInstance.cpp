@@ -83,7 +83,7 @@ void UProjectRenoGameInstance::CreateServer(const FString& SessionName)
 	FOnlineSessionSettings SessionSettings;
 	SessionSettings.bAllowJoinInProgress = true;
 	SessionSettings.bIsDedicated = false;
-	SessionSettings.bIsLANMatch = (IOnlineSubsystem::Get()->GetSubsystemName() != "NULL") ? false : true;
+	SessionSettings.bIsLANMatch = false;
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.bUsesPresence = true;
 	SessionSettings.NumPublicConnections = 5;
@@ -98,7 +98,7 @@ void UProjectRenoGameInstance::JoinServer(const FString& SessionName)
 	DesiredSessionName = SessionName;
 
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
-	SessionSearch->bIsLanQuery = (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL");
+	SessionSearch->bIsLanQuery = false;
 	SessionSearch->MaxSearchResults = 10000;
 	SessionSearch->QuerySettings.Set("SEARCH_PRENENCE", true, EOnlineComparisonOp::Equals);
 
