@@ -33,4 +33,16 @@ protected:
 
 	void LookUp(float InputValue);
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+	float WalkSpeed = 600.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+	float SprintSpeed = 1000.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	bool bIsSprinting = false;
+
+	void StartSprinting();
+	void StopSprinting();
 };
